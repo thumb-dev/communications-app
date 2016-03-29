@@ -13,7 +13,7 @@ function ($scope, $location, $451, AddressList) {
 			$scope.addresses = list;
 			$scope.settings.listCount = count;
 			$scope.pagedIndicator = false;
-		}, $scope.settings.currentPage, $scope.settings.pageSize, $scope.searchTerm, true);
+		}, $scope.settings.currentPage, $scope.settings.pageSize, $scope.searchTerm, false);
 	}
 
     $scope.deleteSelected = function() {
@@ -33,12 +33,11 @@ function ($scope, $location, $451, AddressList) {
     };
     $scope.checkAll = function(event) {
         angular.forEach($scope.addresses, function(add) {
-            add.Selected = event.currentTarget.checked;
+            if (add.IsCustEditable) add.Selected = event.currentTarget.checked;
         });
     };
 
-	$scope.search = function(e) {
-		e.preventDefault();
+	$scope.search = function() {
 		Query();
 	};
 }]);

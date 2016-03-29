@@ -7,7 +7,7 @@
     <div class="col-md-7 col-md-pull-5 col-collapse" ng-show="currentOrder && currentOrder.isEditable" ng-click="showSuccessAlert = false">
         <orderdetails ng-show="hasOrderConfig" />
         <ordershipping />
-        <orderbilling />
+        <orderbilling ng-show="currentOrder.BillingEnabled" />
         <orderapprovals ng-show="currentOrder.Approvals" />
         <div class="navbar-fixed-bottom">
             <div class="view-response-message alert-success text-center" alert-show="actionMessage">
@@ -34,6 +34,8 @@
                             <li ng-if="cart_shipping.shippingAddressLineItem.$invalid">{{'Please choose a ' + ('Shipping' | rl) + ' ' + ('Address' | rl) | xlat}}</li>
                             <li ng-if="cart_shipping.shipMethod.$invalid">{{'Please choose a ' + ('Shipping' | rl) + ' ' + ('Method' | rl) | xlat}}</li>
                             <li ng-if="cart_billing.billingAddress.$invalid">{{'Please choose a ' + ('Billing' | rl) + ' ' + ('Address' | rl) | xlat}}</li>
+                            <li ng-if="cart_billing.billingFirstName.$invalid">{{'Please enter a ' + ('Billing' | rl) + ' ' + ('First Name' | rl) | xlat}}</li>
+                            <li ng-if="cart_billing.billingLastName.$invalid">{{'Please enter a ' + ('Billing' | rl) + ' ' + ('Last Name' | rl) | xlat}}</li>
                             <li ng-if="cart_billing.$error.paymentMethod">{{'Please choose a valid ' + ('Payment' | rl) + ' ' + ('Method' | rl) | xlat}}</li>
                             <li ng-if="!user.Permissions.contains('CreateBillToAddress') && billaddresses.length == 0">
                                 {{'You have not been granted permission to create a ' + ('Billing' | r) + ' ' + ('Address' | r) + ', and no ' + ('Billing' | r) + ' ' + ('Addresses' | r) + ' have been assigned to you. Therefore, you are not allowed to place this ' + ('Order' | r) + ' at this time' | xlat}}
@@ -50,28 +52,7 @@
                     </li>
                 </ul>
             </div>
+            <orderbuttons view="checkout" continue="true"></orderbuttons>
         </div>
-		<div class="row">
-		</div>
-		<div class="panel-footer">
-            <div class="col-sm-1 col-md-8 col-lg-12">
-				<div class="bs-example" data-example-id="btn-variants">
-					<button class="btn btn-danger" ng-click="currentOrder.Status == 'AwaitingApproval' ? cancelEdit() : cancelOrder()">
-						<small ng-show="currentOrder.Status != 'AwaitingApproval'">{{('Cancel' | r) + ' ' + ('Order' | r) | xlat}}</small>
-						<small ng-show="currentOrder.Status == 'AwaitingApproval'">{{('Cancel' | r) + ' ' + ('Edit' | r) | xlat}}</small>
-					</button>
-					<button class="btn btn-primary"  ng-click="saveChanges()">
-						<loadingindicator ng-show="displayLoadingIndicator" />
-						{{('Save' | r) + ' ' + ('Order' | r) | xlat}}
-					</button>
-					<button class="btn"
-						ng-class="{'btn-warning': cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid, 'btn-success': !cart_shipping.$invalid && !cart_order.$invalid && !cart_billing.$invalid }"
-						ng-click="submitOrder()" ng-disabled="cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid">
-						<i ng-show="cart_shipping.$invalid || cart_order.$invalid || cart_billing.$invalid" class="fa fa-warning"></i>
-						<span>{{('Submit' | r) + ' ' + ('Order' | r) | xlat}}</span>
-					</button>
-				</div>
-			</div>	
-		</div>	
-	</div>
+    </div>
 </section>

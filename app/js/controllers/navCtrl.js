@@ -4,7 +4,9 @@ function ($location, $route, $scope, $451, User) {
         User.logout();
         if ($scope.isAnon) {
             $location.path("/catalog");
-            User.login();
+            User.login(function(user) {
+                $scope.user = user;
+            });
         }
     };
 

@@ -84,7 +84,7 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 						haveQtyError = true;
 					}
 				});
-				if(scope.LineItem.Product.Type == 'VariableText' && !Object.keys(scope.variantLineItems).length)
+				if(scope.LineItem.Product.Type == 'VariableText' && (scope.variantLineItems && !Object.keys(scope.variantLineItems).length))
 					newErrorList.push("Please create a variant.");
 				else if(!haveQty && !haveQtyError)
 					newErrorList.push("Please select a quantity");
@@ -312,7 +312,7 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 		return product.StaticSpecGroups.SPAProductConfig.Specs[specName].Value || escapeNull;
 	}
 	function _getProductAndVariant(productInteropID, variantInteropID, callback, page, pagesize, searchTerm){
-		Product.get(productInteropID, function(data){
+		Product.clearCache().get(productInteropID, function(data){
 			var p = data;
 			if(variantInteropID){
 				if(p.Type == 'VariableText'){

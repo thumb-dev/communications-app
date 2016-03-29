@@ -1,5 +1,12 @@
 four51.app.controller('ProductCtrl', ['$scope', '$routeParams', '$route', '$location', '$451', 'Product', 'ProductDisplayService', 'Order', 'Variant', 'User',
 function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplayService, Order, Variant, User) {
+    $scope.isEditforApproval = $routeParams.orderID && $scope.user.Permissions.contains('EditApprovalOrder');
+    if ($scope.isEditforApproval) {
+        Order.get($routeParams.orderID, function(order) {
+            $scope.currentOrder = order;
+        });
+    }
+
     $scope.selected = 1;
     $scope.LineItem = {};
 	$scope.addToOrderText = "Add To Cart";
@@ -59,7 +66,7 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 				redirect ? $location.path('/product/' + $scope.LineItem.Product.InteropID) : $route.reload();
 			},
 			function(ex) {
-				$scope.lineItemErrors.push(ex.Message);
+				if ($scope.lineItemErrors.indexOf(ex.Message) == -1) $scope.lineItemErrors.unshift(ex.Message);
 				$scope.showAddToCartErrors = true;
 			}
 		);
@@ -96,7 +103,7 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 					$scope.user.CurrentOrderID = o.ID;
 					User.save($scope.user, function(){
 						$scope.addToOrderIndicator = true;
-						$location.path('/cart');
+						$location.path('/cart' + ($scope.isEditforApproval ? '/' + o.ID : ''));
 					});
 				},
 				function(ex) {
@@ -121,56 +128,3 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 		$scope.$apply();
 	});
 }]);
-
-/* product matrix control
-four51.app.controller('CustomProductCtrlMatrix', function($scope, $451, Variant, ProductDisplayService){
-	//just a little experiment on extending the product view
-	$scope.matrixLineTotal = 0;
-	$scope.LineItems = {};
-	$scope.LineKeys = [];
-	$scope.lineChanged = function(){
-		var addToOrderTotal = 0;
-		angular.forEach($scope.LineKeys, function(key){
-			if($scope.LineItems[key].Variant){
-				ProductDisplayService.calculateLineTotal($scope.LineItems[key]);
-				addToOrderTotal += $scope.LineItems[key].LineTotal;
-			}
-		$scope.matrixLineTotal = addToOrderTotal;
-
-		});
-	};
-
-	$scope.addMatrixToOrder = function(){ };
-
-	$scope.setFocusVariant = function(opt1, opt2){
-
-		if($scope.LineItems[opt1.Value.toString() + opt2.Value.toString()].Variant){
-			$scope.LineItem.Variant = $scope.LineItems[opt1.Value.toString() + opt2.Value.toString()].Variant;
-			return;
-		}
-
-		Variant.get({'ProductInteropID': $scope.LineItem.Product.InteropID, 'SpecOptionIDs': [opt1.ID, opt2.ID]}, function(data){
-			$scope.LineItem.Variant = data;
-		});
-	};
-	$scope.$watch("LineItems", function(){
-		$scope.lineChanged();
-	}, true);
-
-	$scope.$on('ProductGetComplete', function(){
-		var specs = $451.filter($scope.LineItem.Product.Specs, {Property: 'DefinesVariant', Value: true});
-		$scope.matrixSpec1 = specs[0];
-		$scope.matrixSpec2 = specs[1];
-		angular.forEach(specs[0].Options, function(option1){
-			angular.forEach(specs[1].Options, function(option2){
-				$scope.LineKeys.push(option1.Value.toString() + option2.Value.toString());
-				$scope.LineItems[option1.Value.toString() + option2.Value.toString()] = {
-					Product: $scope.LineItem.Product,
-					PriceSchedule: $scope.LineItem.PriceSchedule,
-				};
-			});
-		});
-	});
-});
-*/
-
