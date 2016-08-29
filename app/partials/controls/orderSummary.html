@@ -22,7 +22,7 @@
         </p>
         <p ng-if="!(user.Permissions.contains('HidePricing'))">
             <span class="text-info">{{'Tax' | r | xlat}}</span>
-            <span class="pull-right">{{currentOrder.TaxCost || 0 | culturecurrency}}</span>
+            <span ng-show="currentOrder.TaxCost && currentOrder.TaxCost > 0" class="pull-right">{{currentOrder.TaxCost | culturecurrency}}</span>
         </p>
         <div ng-show="user.Permissions.contains('ViewPromotions')">
             <div ng-show="!currentOrder.Coupon">
