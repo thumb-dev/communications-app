@@ -192,7 +192,7 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 		if(Object.keys(scope.LineItem.Specs).length){
 			hasAddToOrderSpecs = true;
 		}
-
+		
 		//used for checking pageinated variants for price schedules
 		scope.currentFirstVariant = scope.settings ? (scope.settings.currentPage * scope.settings.pageSize) - scope.settings.pageSize : 0;
 
@@ -281,12 +281,14 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 				return scope.LineItem.Product[type + 'PriceSchedule'] != null;
 				//return scope.LineItem.PriceSchedule.OrderType == type && scope.user.Permissions.contains(type + 'Order');
 			}
-
-			//use scope.currentFirstVariant instead of 0
-			return scope.user.Permissions.contains(type + 'Order')
-			&& scope.variantLineItems ? scope.variantLineItems[scope.LineItem.Product.Variants[scope.currentFirstVariant].InteropID].Variant[type + 'PriceSchedule'] != null : scope.LineItem.Product[type + 'PriceSchedule'] != null
-			&& (scope.currentOrder && scope.currentOrder.ID ? scope.currentOrder.Type == type : true)
-			&& (scope.currentOrder && scope.currentOrder.ID ? (scope.variantLineItems ? scope.variantLineItems[scope.LineItem.Product.Variants[scope.currentFirstVariant].InteropID].PriceSchedule.OrderType : scope.LineItem.PriceSchedule.OrderType) == scope.currentOrder.Type : true);
+            
+            //use scope.currentFirstVariant instead of 0
+			if(scope.user){
+				return scope.user.Permissions.contains(type + 'Order')
+				&& scope.variantLineItems ? scope.variantLineItems[scope.LineItem.Product.Variants[scope.currentFirstVariant].InteropID].Variant[type + 'PriceSchedule'] != null : scope.LineItem.Product[type + 'PriceSchedule'] != null
+				&& (scope.currentOrder && scope.currentOrder.ID ? scope.currentOrder.Type == type : true)
+				&& (scope.currentOrder && scope.currentOrder.ID ? (scope.variantLineItems ? scope.variantLineItems[scope.LineItem.Product.Variants[scope.currentFirstVariant].InteropID].PriceSchedule.OrderType : scope.LineItem.PriceSchedule.OrderType) == scope.currentOrder.Type : true);
+			}
 		}
 
 		function canCreateVariant() {
